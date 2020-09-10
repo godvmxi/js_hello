@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-//const fs = require('fs')
+const fs = require('fs')
 
 
 
@@ -71,7 +71,11 @@ async function scrape_ss(){
             for(let i = 0; i < ss_list.length;i++)
             {
                 let ssStr = generate_url(ss_list[i])
-                plainSsList = plainSsList + "\n" + ssStr
+                if(plainSsList.length == 0){
+                    plainSsList = ssStr;
+                }
+                else
+                    plainSsList = plainSsList + "\n" + ssStr;
             }
             //console.log("SSLIST---->")
             //console.log(plainSsList)
@@ -91,8 +95,22 @@ async function scrape_ss(){
         }
     })
     console.log("ss list" + ss_list )
+
+    fs.writeFile("ss.txt",ss_list, function(err){
+        if(err){
+            console.error(err);
+        }
+        console.log("data write ok")
+        fs.readFile("ss.txt", function (err, data) {
+            if (err) {
+               return console.error(err);
+            }
+            console.log("异步读取文件数据: " + data.toString());
+         });
+
+    } )
     
-    //await page.screenshot({path: 'output/ss.png'});
-    //await browser.close();
+    await page.screenshot({path: 'ss.png'});
+    await browser.close();
 };
 scrape_ss()
