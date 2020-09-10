@@ -1,9 +1,8 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs')
-
-
-
-async function scrape_ss(){
+var arguments = process.argv.splice(2);
+console.log(arguments)
+async function scrape_ss(target_file){
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -95,13 +94,13 @@ async function scrape_ss(){
         }
     })
     console.log("ss list" + ss_list )
-
-    fs.writeFile("ss.txt",ss_list, function(err){
+    console.log("write to : " +  target_file)
+    fs.writeFile(target_file,ss_list, function(err){
         if(err){
             console.error(err);
         }
         console.log("data write ok")
-        fs.readFile("ss.txt", function (err, data) {
+        fs.readFile(target_file, function (err, data) {
             if (err) {
                return console.error(err);
             }
@@ -110,7 +109,7 @@ async function scrape_ss(){
 
     } )
     
-    await page.screenshot({path: 'ss.png'});
+    await page.screenshot({path: target_file+".png"});
     await browser.close();
 };
-scrape_ss()
+scrape_ss(arguments[0])
