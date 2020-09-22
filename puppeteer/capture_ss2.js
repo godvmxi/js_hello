@@ -80,6 +80,7 @@ async function scrape_ss(target_file){
             //console.log(plainSsList)
             return plainSsList
         }
+
         console.log("into table list eval")
         var divs = document.querySelectorAll('div');
         var tbs = $('#tbss')
