@@ -75,43 +75,11 @@ async function scrape_ss(target_file){
     page.setViewport( { 'width':1920, 'height':1080});
     await page.goto('https://free-ss.site/');
 
-    const subscriptionUrl = await page.evaluate(() => {
-        return $('.mdui-textfield-input').val();
-    });
+    let page_html = await page.content();
+    console.log([page_html])
+
     
-    const ss_list = await page.evaluate(() => {
-
-        
-        console.log("into table list eval")
-        var divs = document.querySelectorAll('div');
-        var tbs = $('#tbss')
-        for(var i = 0; i < tbs.length;i++){
-            let ssList = get_all_ss_json(tbs[i])
-            console.log(ssList)
-            let ssListStr = get_ss_suscription(ssList)
-            console.log(ssListStr)
-            return ssListStr
-            
-
-        }
-    })
-    console.log("ss list" + ss_list )
-    console.log("write to : " +  target_file)
-    fs.writeFile(target_file,ss_list, function(err){
-        if(err){
-            console.error(err);
-        }
-        console.log("data write ok")
-        fs.readFile(target_file, function (err, data) {
-            if (err) {
-               return console.error(err);
-            }
-            console.log("异步读取文件数据: " + data.toString());
-         });
-
-    } )
-    
-    await page.screenshot({path: target_file+".png"});
+    //await page.screenshot({path: target_file+".png"});
     await browser.close();
 };
 scrape_ss(arguments[0])
