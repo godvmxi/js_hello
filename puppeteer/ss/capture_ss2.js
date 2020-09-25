@@ -2,7 +2,13 @@ const puppeteer = require('puppeteer');
 const fs = require('fs')
 var arguments = process.argv.splice(2);
 console.log(arguments)
-
+function js_sleep(time = 0) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, time);
+    })
+  };
 function get_all_ss_json(tb)
         {
             let ret = []
@@ -63,7 +69,7 @@ async function scrape_ss(target_file){
     const browser = await puppeteer.launch({
         headless: false,
         devtools:true,
-        slowMo: 250,
+        //slowMo: 250,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -73,13 +79,67 @@ async function scrape_ss(target_file){
     });
     const page = await browser.newPage();
     page.setViewport( { 'width':1920, 'height':1080});
-    await page.goto('https://free-ss.site/');
+    await page.goto('https://free-ss.site/', {
+        waitUntil: 'networkidle0'
+    });
 
     let page_html = await page.content();
-    console.log([page_html])
+    //console.log([page_html])
+
+    await page.click('.sorting_asc')
+
+    js_sleep(500);
+
+    await page.click('.sorting_desc')
+
+    let qr_list = await page.$$('.sorting_1')
+    console.log("qr list -> " + qr_list)
+    console.log("qr list number-> " + qr_list.length)
+    qr_list.forEach(function(item,index){
+        console.log(item+'---'+index );      
+
+    })
+
+    let qr_number = await page.$$eval('.sorting_1', qr_list =>  {
+        console.log("qr list number -> " + qr_list.length)
+        return qr_list.length;
+    }        
+    )
+    console.log("qr list 1-> " + qr_number)
+
+    for(let i = 1; i <  qr_number; i++){
+        let selector = "#tbss > tbody > tr:nth-child("+ i + ") > td.sorting_1 > i"
+        console.log("selector -> " + selector)
+        //await page.click(selector)
+        //js_sleep(5000);
+        //await page.click(selector)
+        //js_sleep(5000);
+    }
+
+
+    //  
+    
+    
+    //console.log("qr lsit num -> " + qr_list.length)
+
+    /*
+    const result = await page.evaluate(() => 
+    {//run js in browser
+        //get jquery in page
+        let $ = window.$;
+        let items =  $('.sorting_1')
+        console.log("item number -> " + items.length)
+
+    }
+    )
+    */
+
+
+
+
 
     
     //await page.screenshot({path: target_file+".png"});
-    await browser.close();
+    //await browser.close();
 };
 scrape_ss(arguments[0])
