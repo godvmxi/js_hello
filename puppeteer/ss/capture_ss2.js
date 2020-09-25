@@ -9,6 +9,7 @@ function js_sleep(time = 0) {
       }, time);
     })
   };
+var wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 function get_all_ss_json(tb)
         {
             let ret = []
@@ -88,7 +89,7 @@ async function scrape_ss(target_file){
 
     await page.click('.sorting_asc')
 
-    js_sleep(500);
+    js_sleep(1000);
 
     await page.click('.sorting_desc')
 
@@ -96,7 +97,7 @@ async function scrape_ss(target_file){
     console.log("qr list -> " + qr_list)
     console.log("qr list number-> " + qr_list.length)
     qr_list.forEach(function(item,index){
-        console.log(item+'---'+index );      
+        console.log(item+'---'+index + item.selector);      
 
     })
 
@@ -106,15 +107,20 @@ async function scrape_ss(target_file){
     }        
     )
     console.log("qr list 1-> " + qr_number)
-
+    
     for(let i = 1; i <  qr_number; i++){
         let selector = "#tbss > tbody > tr:nth-child("+ i + ") > td.sorting_1 > i"
         console.log("selector -> " + selector)
-        //await page.click(selector)
+        page.$eval(selector, function(el, value){
+            return el.setAttribute('style', value)
+         }, 'background: #0FF'
+         )
+        await page.click(selector)
         //js_sleep(5000);
-        //await page.click(selector)
-        //js_sleep(5000);
+        await wait(500)
+
     }
+    
 
 
     //  
