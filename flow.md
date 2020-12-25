@@ -11,7 +11,7 @@ sequenceDiagram
 
 
 
-    rect rgba(0, 255, 120)
+    rect rgb(0, 255, 120)
     %% auth2.0 block
         Note over OAuth,Web : 认证登录
         User ->> Web : 注册登录
